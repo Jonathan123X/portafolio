@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    
+
+  
+  <!-- JONATHAN SAMUEZA
+       2ºDAW -->
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COCHES</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="ruta/al/favicon.ico">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .titulo-pagina {
+            font-size: 24px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        button {
+            background-color: #239700;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .coche {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            /* Agregamos posición relativa para alinear la imagen */
+        }
+
+        .coche img {
+            width: 200px;
+            height: auto;
+            border-radius: 5px;
+            margin-left: 20px;
+            cursor: pointer;
+            /* Cambiamos el cursor al hacer hover sobre la imagen */
+        }
+
+        .coche-info {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        .coche-info p {
+            margin: 5px 0;
+        }
+
+        .botones-opcion {
+            margin-bottom: 20px;
+        }
+
+        /* Estilos para la imagen maximizada */
+        .imagen-maximizada {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Fondo difuminado */
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .imagen-maximizada img {
+            max-width: 80%;
+            max-height: 80%;
+            border-radius: 10px;
+        }
+
+        .cerrar-imagen {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .imagen-coche {
+            margin-left: 208px;
+            /* Espacio entre la descripción y la imagen */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="imagenes/logo.JPG" alt="RentCar.com">
+            </div>
+            <p class="titulo-pagina">RentCar.com</p>
+            <ul>
+                <li><a href="productos.html">Home</a></li>
+                <li><a href="#" onclick="cerrarSesion()">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Opciones de visualización -->
+        <div class="botones-opcion">
+            <button onclick="mostrarTodos()">Mostrar todos los coches</button>
+            <button onclick="mostrarDisponibles()">Mostrar coches disponibles</button>
+        </div>
+        <!-- Lista de coches -->
+        <h1>Lista de Coches</h1>
+
+        <div id="coches-lista"></div>
+        <!-- Fin de lista de coches -->
+
+        <!-- Contenedor de imagen maximizada -->
+        <div class="imagen-maximizada" onclick="cerrarImagen()">
+            <span class="cerrar-imagen">&times;</span>
+            <img id="imagen-maximizada" src="" alt="Imagen maximizada">
+        </div>
+    </main>
+
+    <script>
+        var coches = [
+            {
+                imagen: "imagenes/coche1.jpg",
+                marca: "Opel",
+                modelo: "Mokka",
+                año: 2021,
+                kilometros: 10000,
+                precioPorDia: 41,
+                disponible: false
+            },
+            {
+                imagen: "imagenes/coche2.jpg",
+                marca: "Audi",
+                modelo: "A 1",
+                año: 2022,
+                kilometros: 20000,
+                precioPorDia: 27,
+                disponible: false
+            },
+            {
+                imagen: "imagenes/coche3.jpg",
+                marca: "Fiat",
+                modelo: "500",
+                año: 2022,
+                kilometros: 25000,
+                precioPorDia: 27,
+                disponible: true
+            },
+            {
+                imagen: "imagenes/coche5.jpg",
+                marca: "BMW",
+                modelo: "3 serie cabrio",
+                año: 2022,
+                kilometros: 15000,
+                precioPorDia: 27,
+                disponible: true
+            }
+        ];
+
+        function imprimirCoches(coches) {
+            var cochesLista = document.getElementById('coches-lista');
+            cochesLista.innerHTML = '';
+
+            coches.forEach(function (coche) {
+                var cocheItem = document.createElement('div');
+                cocheItem.classList.add('coche');
+                cocheItem.innerHTML = `
+                <div class="coche-info">
+                    <p><strong>Marca:</strong> ${coche.marca}</p>
+                    <p><strong>Modelo:</strong> ${coche.modelo}</p>
+                    <p><strong>Año:</strong> ${coche.año}</p>
+                    <p><strong>Kilómetros:</strong> ${coche.kilometros}</p>
+                    <p><strong>Precio por Día:</strong> ${coche.precioPorDia} €</p>
+                    <p><strong>Disponible:</strong> ${coche.disponible ? 'Sí' : 'No'}</p>
+                    <button onclick="alquilar(${coches.indexOf(coche)})">Alquilar</button>
+                    <button onclick="cancelar(${coches.indexOf(coche)})">Cancelar</button>
+                </div>
+                <div class="imagen-coche">
+                    <img src="${coche.imagen}" onclick="mostrarImagen('${coche.imagen}')">
+                </div>
+            `;
+                cochesLista.appendChild(cocheItem);
+            });
+        }
+
+        function mostrarTodos() {
+            imprimirCoches(coches);
+            // Almacenar la opción seleccionada en Local Storage
+            localStorage.setItem('opcionSeleccionada', 'todos');
+        }
+
+        function mostrarDisponibles() {
+            var cochesDisponibles = coches.filter(function (coche) {
+                return coche.disponible;
+            });
+            imprimirCoches(cochesDisponibles);
+            // Almacenar la opción seleccionada en Local Storage
+            localStorage.setItem('opcionSeleccionada', 'disponibles');
+        }
+
+        function alquilar(index) {
+            var confirmar = confirm("¿Desea alquilar este coche?");
+            if (confirmar) {
+                coches[index].disponible = false;
+                imprimirCoches(coches);
+            }
+        }
+
+        function cancelar(index) {
+            var confirmar = confirm("¿Desea cancelar el alquiler de este coche?");
+            if (confirmar) {
+                coches[index].disponible = true;
+                imprimirCoches(coches);
+            }
+        }
+
+        function mostrarImagen(url) {
+            var imagenMaximizada = document.getElementById('imagen-maximizada');
+            imagenMaximizada.src = url;
+            var imagenMaximizadaContainer = document.querySelector('.imagen-maximizada');
+            imagenMaximizadaContainer.style.display = 'flex';
+        }
+
+        function cerrarImagen() {
+            var imagenMaximizadaContainer = document.querySelector('.imagen-maximizada');
+            imagenMaximizadaContainer.style.display = 'none';
+        }
+
+        function cerrarSesion() {
+            window.location.href = "index.html";
+        }
+
+        // Función para cargar la opción seleccionada al cargar la página
+        function cargarOpcionSeleccionada() {
+            var opcionSeleccionada = localStorage.getItem('opcionSeleccionada');
+            if (opcionSeleccionada === 'disponibles') {
+                mostrarDisponibles();
+            } else {
+                mostrarTodos();
+            }
+        }
+
+        // Llamar a la función para cargar la opción seleccionada al cargar la página
+        cargarOpcionSeleccionada();
+    </script>
+
+</body>
+
+</html>

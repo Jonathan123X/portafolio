@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+
+  
+  <!-- JONATHAN SAMUEZA
+       2ºDAW -->
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro e Inicio de Sesión</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="ruta/al/favicon.ico">
+</head>
+<body>
+
+<header>
+    <nav>
+        <div class="logo">
+            <img src="imagenes/logo.JPG" alt="RentCar.com">
+        </div>
+        <p class="titulo-pagina">RentCar.com</p>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="registro.html">Registrarse</a></li>
+            <li><a href="registro.html">Inicio Sesion</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>Registro</h2>
+    <form id="registroForm">
+        <input type="text" id="registroUsuario" placeholder="Nombre de usuario" required>
+        <input type="password" id="registroContraseña" placeholder="Contraseña" required>
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <h2>Iniciar Sesión</h2>
+    <form id="inicioSesionForm">
+        <input type="text" id="inicioUsuario" placeholder="Nombre de usuario" required>
+        <input type="password" id="inicioContraseña" placeholder="Contraseña" required>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+
+    <h2>Usuarios Registrados</h2>
+    <ul id="usuariosRegistrados"></ul>
+</main>
+
+<script>
+// Función para obtener la fecha y hora actual
+function obtenerFechaHora() {
+  const now = new Date();
+  return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+}
+
+// Función para guardar un usuario en el almacenamiento local
+function guardarUsuario(usuario, contraseña) {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  usuarios.push({ usuario, contraseña, fechaRegistro: obtenerFechaHora() });
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  mostrarUsuarios();
+}
+
+// Función para eliminar un usuario del almacenamiento local
+function eliminarUsuario(index) {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  usuarios.splice(index, 1);
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  mostrarUsuarios();
+}
+
+// Función para mostrar la lista de usuarios registrados
+function mostrarUsuarios() {
+  const usuariosRegistrados = document.getElementById("usuariosRegistrados");
+  usuariosRegistrados.innerHTML = "";
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  usuarios.forEach((u, index) => {
+    const li = document.createElement("li");
+    li.textContent = `${index + 1}. Usuario: ${u.usuario} - Contraseña: ${u.contraseña} - Fecha de Registro: ${u.fechaRegistro}`;
+    const eliminarBtn = document.createElement("button");
+    eliminarBtn.textContent = "Eliminar";
+    eliminarBtn.className = "eliminar";
+    eliminarBtn.addEventListener("click", () => eliminarUsuario(index));
+    li.appendChild(eliminarBtn);
+    usuariosRegistrados.appendChild(li);
+  });
+}
+
+// Función para verificar las credenciales al iniciar sesión
+function iniciarSesion(usuario, contraseña) {
+  const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+  return usuarios.some((u) => u.usuario === usuario && u.contraseña === contraseña);
+}
+
+// Evento para el registro de usuario
+document.getElementById("registroForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+  const usuario = document.getElementById("registroUsuario").value;
+  const contraseña = document.getElementById("registroContraseña").value;
+  guardarUsuario(usuario, contraseña);
+  alert("Usuario registrado exitosamente.");
+  this.reset();
+});
+
+// Evento para iniciar sesión
+document.getElementById("inicioSesionForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+  const usuario = document.getElementById("inicioUsuario").value;
+  const contraseña = document.getElementById("inicioContraseña").value;
+  if (iniciarSesion(usuario, contraseña)) {
+    alert("Inicio de sesión exitoso.");
+    window.location.href = "productos.html"; // Cambia "productos.html" por la URL de la página a la que quieras redirigir
+  } else {
+    alert("Error: Credenciales incorrectas.");
+  }
+  this.reset();
+});
+
+// Mostrar usuarios al cargar la página
+mostrarUsuarios();
+
+</script>
+
+</body>
+</html>
